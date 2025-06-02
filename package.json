@@ -1,12 +1,29 @@
 {
   "name": "react-form-rules",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
+  ],
+  "keywords": [
+    "react form validation",
+    "form rules",
+    "react input validation",
+    "custom form hook",
+    "react form hook",
+    "form context validation",
+    "react validation library",
+    "input helper text",
+    "react form helper",
+    "typescript form validation",
+    "minimal form validation",
+    "react scroll to error",
+    "react input error handling",
+    "form error message",
+    "react context form"
   ],
   "scripts": {
     "build": "tsc && vite build",

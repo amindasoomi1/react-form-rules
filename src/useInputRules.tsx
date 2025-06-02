@@ -1,53 +1,65 @@
 import { Rules } from "@/types";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useFormRulesContext } from "./Context";
 import randomID from "./randomID";
 
+// Task #1: Validate on submit or change or blur
+// Task #2: Async rules
+
 type Config = {
   rules: Rules;
+  // validateOn?: ("blur" | "change" | "submit")[];
 };
 
-export default function useInputRules({ rules }: Config) {
+export default function useInputRules({
+  rules,
+}: // validateOn = ["submit"],
+Config) {
   const { setFormControl, removeFormControl } = useFormRulesContext();
   //   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  //eslint-disable-next-line
+  const hasError = useMemo(() => {
+    return !!rules.length && error && !!errorMessage;
+  }, [rules, error, errorMessage]);
+
+  // const isBlur = useMemo(() => {
+  //   return validateOn.includes("blur");
+  // }, [validateOn]);
+  // const isChange = useMemo(() => {
+  //   return validateOn.includes("change");
+  // }, [validateOn]);
+  // const isSubmit = useMemo(() => {
+  //   return validateOn.includes("submit");
+  // }, [validateOn]);
   //   const isAsync = useCallback((fn: Function) => {
   //     const AsyncFunction = async function () {}.constructor;
   //     return fn instanceof AsyncFunction;
   //   }, []);
 
   const validate = useCallback(
+    (value: string) => {
+      if (!rules.length) return null;
+      for (const rule of rules) {
+        const result = rule(value);
+        const isString = typeof result === "string";
+        if (isString) return result;
+      }
+      return null;
+    },
+    [rules]
+  );
+  const handleValidate = useCallback(
     (node: HTMLInputElement | HTMLTextAreaElement) => {
       const id = node.id;
       const value = node.value;
-      if (!rules.length) {
-        setFormControl?.(id, true);
-        setErrorMessage(null);
-        setError(false);
-        return;
-      }
-      for (const rule of rules) {
-        // if (isAsync(rule)) setLoading(true);
-        const result = rule(value);
-        const isString = typeof result === "string";
-        if (isString) {
-          setFormControl?.(id, false, () => {
-            setError(true);
-          });
-          setErrorMessage(result);
-          //   setLoading(false);
-          return;
-        }
-      }
-      setFormControl?.(id, true);
-      setErrorMessage(null);
-      setError(false);
-      //   setLoading(false);
+      const errorMessage = validate(value);
+      const valid = !errorMessage;
+      setErrorMessage(errorMessage);
+      setFormControl?.(id, valid, () => setError(!valid));
     },
-    [rules, setFormControl]
+    [validate, setFormControl]
   );
 
   const inputRef = useCallback(
@@ -55,20 +67,20 @@ export default function useInputRules({ rules }: Config) {
       if (!node) return;
       node.id ||= randomID();
       const id = node.id;
-      validate(node);
-      const observer = new MutationObserver(() => validate(node));
-      observer.observe(node, {
-        attributes: true,
-        childList: true,
-        subtree: true,
-      });
+      handleValidate(node);
+      const ob = new MutationObserver(() => handleValidate(node));
+      ob.observe(node, { attributes: true, childList: true, subtree: true });
       return () => {
-        observer.disconnect();
+        ob.disconnect();
         removeFormControl?.(id);
       };
     },
-    [validate, removeFormControl]
+    [handleValidate, removeFormControl]
   );
 
-  return { ref: inputRef, error, errorMessage };
+  return {
+    ref: inputRef,
+    error: hasError,
+    errorMessage,
+  };
 }

@@ -3,12 +3,18 @@
 import { ComponentProps, FormEvent, useRef } from "react";
 import { FormRulesContext } from "./Context";
 
+type BaseProps = {
+  selectOnError?: boolean;
+  scrollOnError?: boolean;
+};
 export default function Form({
   onSubmit,
   onError,
   children,
+  selectOnError = true,
+  scrollOnError = true,
   ...props
-}: ComponentProps<"form">) {
+}: BaseProps & Omit<ComponentProps<"form">, keyof BaseProps>) {
   const formControlsRef = useRef<
     Record<string, { value: boolean; callback?: VoidFunction }>
   >({});
@@ -37,14 +43,18 @@ export default function Form({
     const canSubmit = result.every((e) => e.valid);
     if (canSubmit) return onSubmit?.(e);
     const errorElement = result.find((e) => !e.valid)?.element;
-    // eslint-disable-next-line
-    // @ts-expect-error
-    errorElement?.select?.();
-    errorElement?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-      inline: "center",
-    });
+    if (selectOnError) {
+      // eslint-disable-next-line
+      // @ts-expect-error
+      errorElement?.select?.();
+    }
+    if (scrollOnError) {
+      errorElement?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "center",
+      });
+    }
     onError?.(e);
   };
   return (

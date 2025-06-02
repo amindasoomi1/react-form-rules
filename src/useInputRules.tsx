@@ -18,11 +18,11 @@ Config) {
   const { setFormControl, removeFormControl } = useFormRulesContext();
   //   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [helperText, setHelperText] = useState<string | null>(null);
 
   const hasError = useMemo(() => {
-    return !!rules.length && error && !!errorMessage;
-  }, [rules, error, errorMessage]);
+    return !!rules.length && error && !!helperText;
+  }, [rules, error, helperText]);
 
   // const isBlur = useMemo(() => {
   //   return validateOn.includes("blur");
@@ -54,9 +54,9 @@ Config) {
     (node: HTMLInputElement | HTMLTextAreaElement) => {
       const id = node.id;
       const value = node.value;
-      const errorMessage = validate(value);
-      const valid = !errorMessage;
-      setErrorMessage(errorMessage);
+      const helperText = validate(value);
+      const valid = !helperText;
+      setHelperText(helperText);
       setFormControl?.(id, valid, () => setError(!valid));
     },
     [validate, setFormControl]
@@ -81,6 +81,6 @@ Config) {
   return {
     ref: inputRef,
     error: hasError,
-    errorMessage,
+    helperText,
   };
 }

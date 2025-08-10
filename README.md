@@ -1,14 +1,16 @@
 # react-form-rules
 
-Smart form validation for React using contextual input rules. Show helper messages on input, prevent form submission if invalid, and scroll/select to the first error input.
+Smart and flexible form validation for React using contextual input rules.  
+Show dynamic helper messages on inputs, prevent form submission if invalid, and automatically scroll/select the first error field.
 
 ## Features
 
-- ✅ Input-level validation via `useInputRules`
-- ✅ Show dynamic `helperText` while typing
+- ✅ Input-level validation via `useInputRules` hook
+- ✅ Dynamic `helperText` shown while typing
 - ✅ Prevent form submission if any rule fails
-- ✅ Scroll to and select the first invalid field
-- ✅ Minimal setup, fully typed, no external dependencies
+- ✅ Automatically scroll to and select the first invalid input field
+- ✅ Minimal setup, fully typed with TypeScript
+- ✅ No external dependencies
 
 ## Installation
 
@@ -57,9 +59,30 @@ function Login() {
 }
 ```
 
-> ⚠️ `useInputRules` must be used **inside** a `<Form>` component from this package. It depends on context for form integration and won't work outside of it.
+> **Note:** The `<Form>` component **must** wrap all inputs that use `useInputRules` or `WithInputRules` hooks. These hooks depend on React context provided by `<Form>` for validation and error management. Using them outside of `<Form>` will cause errors or unexpected behavior.
 
-## Examples of Rules
+---
+
+## `WithInputRules` Component
+
+An alternative render-prop component that provides input validation utilities to its child as a function.
+
+```tsx
+<WithInputRules rules={[(val) => val.length > 0 || "This field is required"]}>
+  {({ ref, error, helperText }) => (
+    <div className={error ? "text-error-700" : undefined}>
+      <input ref={ref} />
+      <p>{helperText}</p>
+    </div>
+  )}
+</WithInputRules>
+```
+
+This component internally uses `useInputRules` and passes the result to its child function, enabling flexible and declarative validation rendering.
+
+---
+
+## Example Of Rules
 
 Rules are simple functions that receive the input value and return either `true` (valid) or a `string` with an error message.
 

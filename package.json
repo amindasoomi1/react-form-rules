@@ -1,6 +1,7 @@
 {
   "name": "react-form-rules",
-  "version": "0.0.12",
+  "description": "Declarative and reusable validation rules for React forms — simple, flexible, and easy to integrate.",
+  "version": "0.0.13",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -31,10 +32,8 @@
     "release": "npm run build && npm version patch --no-git-tag-version --no-commit-hooks && npm publish"
   },
   "dependencies": {
-    "path": "^0.12.7",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "vite-plugin-dts": "^4.5.4"
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.9",
@@ -46,6 +45,12 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "typescript": "^5.2.2",
-    "vite": "^7.1.1"
+    "vite": "^7.1.1",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "author": "Amin Dasoomi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amindasoomi1/react-form-rules.git"
   }
 }

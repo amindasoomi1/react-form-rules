@@ -4,7 +4,7 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), dts({ entryRoot: "src" })],
+  plugins: [react(), dts({ entryRoot: "src", outDir: "dist" })],
   resolve: {
     alias: {
       // eslint-disable-next-line
@@ -20,7 +20,8 @@ export default defineConfig({
       fileName: "index",
     },
     rollupOptions: {
-      external: ["react", "react-dom"],
+      external: ["react", "react-dom", "react/jsx-runtime"],
+      output: { globals: { react: "React", "react-dom": "ReactDOM" } },
     },
   },
 });

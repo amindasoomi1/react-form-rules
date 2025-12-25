@@ -2,6 +2,7 @@ import { Rules } from "@/types";
 import { useCallback, useMemo, useState } from "react";
 import { useFormRulesContext } from "./Context";
 import randomID from "./randomID";
+import runValidation from "./runValidation";
 
 // Task #1: Validate on submit or change or blur
 // Task #2: Async rules
@@ -21,7 +22,7 @@ Config) {
   const [helperText, setHelperText] = useState<string | null>(null);
 
   const hasError = useMemo(() => {
-    return !!rules.length && error && !!helperText;
+    return !!rules.length && error && helperText !== null;
   }, [rules, error, helperText]);
 
   // const isBlur = useMemo(() => {
@@ -38,28 +39,16 @@ Config) {
   //     return fn instanceof AsyncFunction;
   //   }, []);
 
-  const validate = useCallback(
-    (value: string) => {
-      if (!rules.length) return null;
-      for (const rule of rules) {
-        const result = rule(value);
-        const isString = typeof result === "string";
-        if (isString) return result;
-      }
-      return null;
-    },
-    [rules]
-  );
   const handleValidate = useCallback(
     (node: HTMLInputElement | HTMLTextAreaElement) => {
       const id = node.id;
       const value = node.value;
-      const helperText = validate(value);
-      const valid = !helperText;
+      const helperText = runValidation(value, rules);
+      const valid = helperText === null;
       setHelperText(helperText);
       setFormControl?.(id, valid, () => setError(!valid));
     },
-    [validate, setFormControl]
+    [rules, setFormControl]
   );
 
   const inputRef = useCallback(

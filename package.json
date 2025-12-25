@@ -1,7 +1,7 @@
 {
   "name": "react-form-rules",
   "description": "Declarative and reusable validation rules for React forms — simple, flexible, and easy to integrate.",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "pack": "npm run build && npm pack",
     "release": "npm run build && npm version patch --no-git-tag-version --no-commit-hooks && npm publish"
   },
   "peerDependencies": {
